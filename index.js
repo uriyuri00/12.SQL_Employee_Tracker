@@ -30,9 +30,12 @@ function ManageQuestion() {
                             'Add Role',
                             'Veiw All Department', 
                             'Add Department',
-                            'Delete Department',
-                            'Delete roles',
-                            'Delete Employee',
+                            // 'Update Employee manager',
+                            // 'View Employees by manager',
+                            // 'View Empoyees by department',
+                            // 'Delete Department',
+                            // 'Delete roles',
+                            // 'Delete Employee',
                             'Quit'
                         ]}
         ])
@@ -58,15 +61,24 @@ function ManageQuestion() {
             if( result === 'Add Department'){
                 AddDepartment();
             }
-            if( result === 'Delete Department'){
-                DeleteDepartment();
-            }
-            if( result === 'Delete roles'){
-                DeleteRoles();
-            }
-            if( result === 'Delete Employee'){
-                DeleteEmployee();
-            }
+            // if (result === 'Update Employee manager'){
+            //     UpdateEmployeeManager();
+            // }
+            // if (result === 'View Employees by manager'){
+            //     ViewEmployeesByManager();
+            // }
+            // if (result === 'View Empoyees by department'){
+            //     ViewEmpoyeesByDepartment();
+            // }
+            // if( result === 'Delete Department'){
+            //     DeleteDepartment();
+            // }
+            // if( result === 'Delete roles'){
+            //     DeleteRoles();
+            // }
+            // if( result === 'Delete Employee'){
+            //     DeleteEmployee();
+            // }
             if( result === 'Quit'){
                 Quit();
             }
@@ -88,7 +100,7 @@ function AddEmployees() {
             message:"What is the employee's first name?"
         },
         {
-            name: "Employee's first name",
+            name: "Employee's last name",
             type: "input",
             message:"What is the employee's last name?"
         },
@@ -96,13 +108,13 @@ function AddEmployees() {
             name: "Employee's role",
             type: "list",
             message:"What is the employee's role?",
-            choices: ["Sales Lead", "Salesperson", "Lead Engineer"]
+            choices: ["Account Manager","Accountant","Legal Team Lead","Lawyer", "Sales Lead", "Salesperson", "Lead Engineer"]// {roles.name}
         },
         {
             name: "Employee's manager",
             type: "list",
             message:"Who is the employee's manager?",
-            choices: ["Sales Lead", "Salesperson", "Lead Engineer"]
+            choices: []// [{manger}]
         },
     ])
 };
@@ -114,13 +126,13 @@ function UpdateEmployeeRole(){
                 name: "Update employee's role",
             type: "input",
             message:"Which employee's role do you wnat to update?",
-            choices: ["Sales Lead", "Salesperson", "Lead Engineer"]
+            choices: ["Sales Lead", "Salesperson", "Lead Engineer"] //[{employee}]
             },
             {
                 name: "Update role",
             type: "list",
             message:"Which role do you want to assign the selected employee?",
-            choices: ["Sales Lead", "Salesperson", "Lead Engineer"]
+            choices: ["Sales Lead", "Salesperson", "Lead Engineer"]//[{roles.title}]
             }
         ])
 }

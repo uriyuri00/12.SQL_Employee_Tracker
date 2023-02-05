@@ -1,10 +1,19 @@
-const mysql = require('mysql2');
+SELECT
+     roles.id AS id, roles.title AS title, department.name AS department, roles.salary AS salary
+FROM roles
+JOIN department ON roles.department_id = department.id;
 
-const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  database: 'test'
-});
+SELECT
+     employee.id AS id,
+      employee.first_name AS first_name, 
+      employee.last_name AS last_name,
+      roles.title AS title, 
+      department.name AS department, 
+      roles.salary AS salary,
+      employee.manager_id
+FROM employee
+JOIN roles  
+JOIN department ON roles.id = employee.role_id;
 
 /*connection.query(
   'SELECT * FROM `table` WHERE `name` = "Page" AND `age` > 45',
