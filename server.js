@@ -3,9 +3,7 @@ const figlet = require('figlet');
 const inquirer = require('inquirer')
 const express = require("express") 
 const mysql = require('mysql2');
-
-const fs= require("fs")
-const cTable = require('console.table');
+const table = require('console.table');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -106,9 +104,28 @@ function ManageQuestion() {
       })
 };
 
-// ManageQuestion();
 
-// ViewAllEmployees();
+function ViewAllEmployees(){
+    const sql = `SELECT
+     employee.id AS id,
+     employee.first_name AS first_name, 
+     employee.last_name AS last_name,
+     roles.title AS title, 
+     department.name AS department, 
+     roles.salary AS salary,
+     employee.manager_id
+     FROM employee
+     JOIN roles   ON roles.id = employee.role_id
+     JOIN department ON roles.department_id = department.id`;
+    db.query(sql,(err, rows) => {
+        if(err){
+            throw err
+        }
+        console.log("\n")
+        console.table(rows);
+        return ManageQuestion();
+    })
+};
 
 function AddEmployees() {
   inquirer
@@ -144,6 +161,9 @@ function AddEmployees() {
   })
 };
 
+
+
+
 function UpdateEmployeeRole(){
   inquirer
       .prompt([
@@ -162,7 +182,20 @@ function UpdateEmployeeRole(){
       ])
 }
 
-// ViewAllRoles()
+function ViewAllRoles(){
+    const sql = `SELECT
+    roles.id AS id, roles.title AS title, department.name AS department, roles.salary AS salary
+    FROM roles
+    JOIN department ON roles.department_id = department.id;`;
+    db.query(sql,(err, rows) => {
+        if(err){
+            throw err
+        }
+        console.log("\n")
+        console.table(rows);
+        return ManageQuestion();
+    })
+};
 
 function AddRole(){
   inquirer
@@ -189,22 +222,14 @@ function AddRole(){
 
 function ViewAllDepartment(){
   const query = `SELECT
-  employee.id AS id,
-   employee.first_name AS first_name, 
-   employee.last_name AS last_name,
-   roles.title AS title, 
-   department.name AS department, 
-   roles.salary AS salary,
-   employee.manager_id
-FROM employee
-JOIN roles  
-JOIN department ON roles.id = employee.role_id; `;
+  * FROM department `;
         db.query(query, (err, res) => {
             if (err) {
                 throw err;
             }
+            console.log("\n")
             console.table(res);
-            loginDB();
+            return ManageQuestion();
         })
 
 }
@@ -215,10 +240,22 @@ function AddDepartment(){
           {
               name: "Department name",
               type: "input",
-              message:"What is the name of the department?"
+              message:"What is the new name of the department?"
           },
       ])
+      .then(answer => {
+        const sql = `INSERT INTO departments (name)
+        VALUES (?)`;
+        const params = answer.name;
+        db.query(sql, params, (err) => {
+            if (err) {
+                throw err;
+            }
+            console.log("Department added!");
+            return ViewAllDepartment();
+      })
 
+});
 }
 
 // DeleteDepartment()
