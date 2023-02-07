@@ -12,8 +12,8 @@ SELECT
       roles.salary AS salary,
       employee.manager_id
 FROM employee
-JOIN roles  
-JOIN department ON roles.id = employee.role_id;
+JOIN roles   ON roles.id = employee.role_id
+JOIN department ON roles.department_id = department.id;
 
 /*connection.query(
   'SELECT * FROM `table` WHERE `name` = "Page" AND `age` > 45',
