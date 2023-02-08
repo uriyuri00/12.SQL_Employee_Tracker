@@ -18,6 +18,7 @@ VALUES  ("Sales Lead", 100000, 01 ),
         
 
 
+
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
 VALUES ("John", "Doe", 001, 1111 ),
        ("Mike", "Chan", 002, NULL),
