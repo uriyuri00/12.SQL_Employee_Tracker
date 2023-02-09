@@ -50,9 +50,9 @@ function ManageQuestion() {
           // 'Update Employee manager',
           // 'View Employees by manager',
           // 'View Empoyees by department',
-          // 'Delete Department',
+          'Delete Department',
           // 'Delete roles',
-          // 'Delete Employee',
+          'Delete Employee',
           "Quit",
         ],
       },
@@ -88,15 +88,15 @@ function ManageQuestion() {
       // if (result === 'View Empoyees by department'){
       //     ViewEmpoyeesByDepartment();
       // }
-      // if( result === 'Delete Department'){
-      //     DeleteDepartment();
-      // }
+      if( result.Question === 'Delete Department'){
+          DeleteDepartment();
+      }
       // if( result === 'Delete roles'){
       //     DeleteRoles();
       // }
-      // if( result === 'Delete Employee'){
-      //     DeleteEmployee();
-      // }
+      if( result === 'Delete Employee'){
+          DeleteEmployee();
+      }
       if (result === "Quit") {
         Quit();
       }
@@ -104,17 +104,30 @@ function ManageQuestion() {
 }
 
 function ViewAllEmployees() {
-  const sql = `SELECT
-     employee.id AS id,
-     employee.first_name AS first_name, 
-     employee.last_name AS last_name,
-     roles.title AS title, 
-     department.name AS department, 
-     roles.salary AS salary,
-     employee.manager_id
-     FROM employee
-     JOIN roles   ON roles.id = employee.role_id
-     JOIN department ON roles.department_id = department.id`;
+  // const sql = `SELECT
+  //    employee.id AS id,
+  //    employee.first_name AS first_name, 
+  //    employee.last_name AS last_name,
+  //    roles.title AS title, 
+  //    department.name AS department, 
+  //    roles.salary AS salary,
+  //    employee.manager_id
+  //    FROM employee
+  //    LEFT JOIN employee manager ON manager.id = employee.manager_id
+  //    JOIN roles   ON roles.id = employee.role_id
+  //    JOIN department ON roles.department_id = department.id`;
+  const sql = `SELECT employee.id, 
+        employee.first_name, 
+        employee.last_name, 
+        roles.title, 
+        department.name AS department, 
+        roles.salary, 
+        CONCAT(manager.first_name, ' ', manager.last_name) AS manager 
+        FROM employee 
+        LEFT JOIN roles on employee.role_id = roles.id 
+        LEFT JOIN department on roles.department_id = department.id 
+        LEFT JOIN employee manager on manager.id = employee.manager_id;`
+
   db.query(sql, (err, rows) => {
     if (err) {
       throw err;
@@ -140,8 +153,12 @@ function AddEmployees() {
       }
     ])
     .then(answers => {
+        let firstName = answers.first_name;
+        let lastName = answers.last_name;
         const sql = `SELECT * FROM roles`;
+        
         const params = [answers.first_name, answers.last_name];
+        
         db.query(sql, (err,rows)=> {
           if (err) {
             throw err;
@@ -156,7 +173,7 @@ function AddEmployees() {
             }
             ])
             .then(roleAnswer => {
-                const role = roleAnswer.role;
+                const role = roleAnswer.role_id;
                 params.push(role);
                 const sql = `SELECT * FROM employee`;
                 db.query(sql, (err, rows) => {
@@ -174,11 +191,20 @@ function AddEmployees() {
                         }
                     ])
                     .then(managerAnswer => {
+                        // console.log(managerAnswer);
                         const manager = managerAnswer.manager;
                         params.push(manager);
-                        const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
-                        VALUES (?,?,?,?)`;
-                        db.query(sql, params, (err) => {
+                        let employee = { 
+                          manager_id : manager,
+                          role_id : role,
+                          last_name : lastName,
+                          first_name : firstName
+
+                        }
+                        const sql = `INSERT INTO employee SET ?`
+                        // const sql = `INSERT INTO employee (first_name, last_name, role_id, manager_id)
+                        // VALUES (?,?,?,?,?,?)`;
+                        db.query(sql, employee, (err) => {
                             if (err) {
                                 throw err
                             }
@@ -304,16 +330,77 @@ function AddDepartment() {
       });
     });
 }
+function DeleteDepartment() {
+  const sql =`SELECT * FROM department`;
+  db.query(sql, (err, res)=> {
+    if (err){
+      throw err;
+    }
+    const departments = res.map(({name, id}) => ({name: name, value:id}));
+    inquirer
+    .prompt([
+      {
+        name: "deleteDepartment",
+        type: "list",
+        message: "Which department do you want to delete?",
+        choices: departments
+      },
+    ])
+    .then(answers => {
+      const sql = `DELETE FROM department 
+        WHERE id = ${answers.deleteDepartment}`;
+      db.query(sql, (err,res) => {
+        if (err) {
+          throw err;
+        }
+        console.log("Department deleted");
+        ViewAllDepartment();
+      });
+    });
+  })
+  
+}
 
-// DeleteDepartment()
 
 // DeleteRoles()
 
-// DeleteEmployee()
+function DeleteEmployee() {
+  const sql = `SELECT id, first_name, last_name FROM employee`;
+  db.query(sql, (err, res) => {
+      if (err) {
+          throw err;
+      }
+      const employees = res.map(({first_name, id} )=> ({name: last_name, value: id }))
+  
+      inquirer
+          .prompt([
+              {
+                  type: "list",
+                  name: "id",
+                  message: "Which employee would you like to remove from database?",
+                  choices: employees
+              }
+          ])
+          .then(response => {
+              const deleteQuery = `DELETE FROM Employee WHERE id = ${response.id}`;
+              db.query(deleteQuery, (err, res) => {
+                  if (err) {
+                      throw err;
+                  }
+                  console.log("Employee has been removed from database.");
+                  ViewAllEmployees();
+              })
+          })
+  })
+}
 
-// Quit()
 
-//Default response for any other request (Not Found)
+
+
+function Quit() {
+   db.end();
+}
+
 app.use((req, res) => {
   res.status(404).end();
 });

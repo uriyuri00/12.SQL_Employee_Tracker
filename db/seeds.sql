@@ -20,12 +20,12 @@ VALUES  ("Sales Lead", 100000, 01 ),
 
 
 INSERT INTO employee (first_name, last_name, role_id, manager_id)
-VALUES ("John", "Doe", 001, 1111 ),
+VALUES ("John", "Doe", 001, 1 ),
        ("Mike", "Chan", 002, NULL),
-       ("Ashley", "Rod", 003, 2222 ),
+       ("Ashley", "Rod", 003, 2 ),
        ("Kevin", "Tutu", 004, NULL),
-       ("Kunal", "Singh", 005, 3333 ),
+       ("Kunal", "Singh", 005, 3 ),
        ("Malia", "Brown", 006, NULL),
-       ("Sarah", "Lourd", 007, 4444 ),
+       ("Sarah", "Lourd", 007, 4 ),
        ("Tom", "Allen", 008, NULL);
        
