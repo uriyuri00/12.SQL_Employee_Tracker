@@ -3,7 +3,6 @@
 ## Table of Contents 
   - [Project Description](#Description)
   - [Usage](#Usage)
-  - [Contribution](#Contribution)
   - [Installation](#Installation)
   - [TestInstructions](#TestInstructions)
   - [Screenshots](#Screenshots)
